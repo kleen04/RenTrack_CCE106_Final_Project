@@ -1,0 +1,22 @@
+import { Image, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { colors, money } from '../theme';
+import { AddButton, Header, SectionTitle, StatusPill } from '../components/UI';
+
+export default function GarageScreen({ cars, fleet, filter, setFilter, query, setQuery, onVehicle, onNew, onAddVehicle }) {
+  const available=fleet.filter(x=>x.status==='Available').length;
+  const rented=fleet.filter(x=>x.status==='Rented').length;
+  return <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={s.page}>
+    <Header eyebrow="RENTTRACK / FLEET CONTROL" title="The garage" action={<AddButton onPress={onAddVehicle}/>}/>
+    <View style={s.pulse}><View><Text style={s.pulseKicker}>FLEET PULSE / LIVE</Text><Text style={s.pulseValue}>{available} ready <Text style={s.pulseMuted}>/ {rented} out</Text></Text></View><Text style={s.pulseMark}>LIVE</Text></View>
+    <View style={s.search}><Text style={s.searchMark}>Q</Text><TextInput style={s.searchInput} value={query} onChangeText={setQuery} placeholder="Search a vehicle" placeholderTextColor="#6F8979"/></View>
+    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.filters}>{['All','Available','Reserved','Rented'].map(item=><Pressable key={item} onPress={()=>setFilter(item)} style={[s.filter,filter===item&&s.filterActive]}><Text style={[s.filterText,filter===item&&s.filterTextActive]}>{item}</Text></Pressable>)}</ScrollView>
+    <SectionTitle right={cars.length+' VEHICLES'}>FLEET INVENTORY</SectionTitle>
+    <View style={s.grid}>{cars.map(car=><Pressable key={car.id} onPress={()=>onVehicle(car)} style={s.card}><Image source={{uri:car.image}} style={s.cardImage}/><View style={s.cardBody}><StatusPill status={car.status}/><Text style={s.make}>{car.make.toUpperCase()}</Text><Text numberOfLines={1} style={s.model}>{car.model}</Text><Text style={s.rate}>{money(car.rate)} <Text style={s.day}>/ DAY</Text></Text></View></Pressable>)}</View>
+    {!cars.length&&<Text style={s.empty}>No vehicles match that search.</Text>}
+    <Pressable style={s.addVehicle} onPress={onAddVehicle}><Text style={s.addVehicleText}>+  ADD VEHICLE</Text></Pressable>
+    <Pressable style={s.outline} onPress={onNew}><Text style={s.outlineText}>CREATE A RESERVATION</Text></Pressable>
+  </ScrollView>;
+}
+const s=StyleSheet.create({
+ page:{padding:20,paddingBottom:102},pulse:{backgroundColor:colors.panel2,borderWidth:1,borderColor:colors.line,borderRadius:15,padding:15,marginBottom:15,flexDirection:'row',justifyContent:'space-between',alignItems:'center'},pulseKicker:{color:colors.lime,fontSize:9,letterSpacing:1,fontWeight:'900'},pulseValue:{color:colors.paper,fontSize:22,fontWeight:'900',marginTop:5},pulseMuted:{color:colors.muted},pulseMark:{color:colors.dark,backgroundColor:colors.lime,overflow:'hidden',borderRadius:5,paddingVertical:5,paddingHorizontal:7,fontSize:8,letterSpacing:.6,fontWeight:'900'},search:{height:48,backgroundColor:colors.panel,borderWidth:1,borderColor:colors.line,borderRadius:13,flexDirection:'row',alignItems:'center',paddingHorizontal:14,marginBottom:14},searchMark:{color:colors.muted,fontSize:12,fontWeight:'900',marginRight:10},searchInput:{flex:1,color:colors.paper,fontSize:14,height:'100%'},filters:{gap:8,paddingBottom:22},filter:{borderRadius:18,borderWidth:1,borderColor:colors.line,paddingVertical:9,paddingHorizontal:14},filterActive:{backgroundColor:colors.lime,borderColor:colors.lime},filterText:{color:colors.muted,fontSize:11,fontWeight:'800'},filterTextActive:{color:colors.dark},grid:{flexDirection:'row',flexWrap:'wrap',gap:11},card:{width:'48.4%',backgroundColor:colors.panel,borderColor:colors.line,borderWidth:1,borderRadius:14,overflow:'hidden'},cardImage:{width:'100%',height:82,resizeMode:'cover'},cardBody:{padding:10},make:{color:colors.muted,fontSize:8,letterSpacing:.7,fontWeight:'800',marginTop:9},model:{color:colors.paper,fontSize:15,lineHeight:18,fontWeight:'900',marginTop:2},rate:{color:colors.lime,fontSize:12,fontWeight:'900',marginTop:7},day:{color:colors.muted,fontSize:8},addVehicle:{height:49,borderRadius:10,backgroundColor:colors.lime,alignItems:'center',justifyContent:'center',marginTop:20},addVehicleText:{color:colors.dark,fontSize:10,letterSpacing:1,fontWeight:'900'},outline:{height:49,borderRadius:10,borderWidth:1,borderColor:colors.lime,alignItems:'center',justifyContent:'center',marginTop:10},outlineText:{color:colors.lime,fontSize:10,letterSpacing:1,fontWeight:'900'},empty:{color:colors.muted,textAlign:'center',marginTop:25},
+});

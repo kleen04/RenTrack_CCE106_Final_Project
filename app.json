@@ -19,6 +19,22 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow RentTrack to choose vehicle photos from your gallery."
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow RentTrack to access the camera to scan vehicle QR codes.",
+          "barcodeScannerEnabled": true
+        }
+      ]
+    ]
   }
 }
